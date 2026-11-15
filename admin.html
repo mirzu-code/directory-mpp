@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Pentadbir MPP UTHM 2026/2027</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Styling khusus Admin */
+    body {
+      background-color: #f8fafc;
+    }
+    .admin-header {
+      background: #002244;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--uthm-gold);
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .admin-container {
+      max-width: 1320px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .admin-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .admin-tab-btn {
+      background: white;
+      border: 1px solid #cbd5e1;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .admin-tab-btn.active {
+      background: #003366;
+      color: white;
+      border-color: #003366;
+    }
+    .admin-panel {
+      display: none;
+    }
+    .admin-panel.active {
+      display: block;
+    }
+    .stats-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 25px;
+    }
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      border-left: 5px solid #003366;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .stat-card.gold { border-left-color: var(--uthm-gold); }
+    .stat-card.pink { border-left-color: #e1306c; }
+    .stat-card.green { border-left-color: #10b981; }
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .stat-icon {
+      font-size: 2.2rem;
+      color: #cbd5e1;
+    }
+    .admin-table-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #e2e8f0;
+      overflow-x: auto;
+    }
+    .table-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .admin-table th, .admin-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .admin-table th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+    .admin-table tr:hover {
+      background-color: #f8fafc;
+    }
+    .badge-status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .badge-pending { background: #fef3c7; color: #b45309; }
+    .badge-investigating { background: #e0f2fe; color: #0369a1; }
+    .badge-completed { background: #dcfce7; color: #15803d; }
+    .btn-action-small {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-right: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-view-detail { background: #0284c7; color: #ffffff; }
+    .btn-view-detail:hover { background: #0369a1; }
+    .btn-edit { background: #e0e7ff; color: #3730a3; }
+    .btn-delete { background: #fee2e2; color: #991b1b; }
+    .btn-add-new {
+      background: #003366;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-add-new:hover { background: #002244; }
+    .btn-reset-data {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid #f87171;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    /* Detail View Styling */
+    .detail-section-block {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .detail-grid-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      padding: 6px 0;
+      border-bottom: 1px dashed #e2e8f0;
+      font-size: 0.88rem;
+    }
+    .detail-grid-row:last-child {
+      border-bottom: none;
+    }
+    .detail-label-title {
+      font-weight: 700;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Nav -->
+  <header class="admin-header">
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <div class="brand-logo-badge" style="background: var(--uthm-gold);">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <div>
+        <h2 style="font-size: 1.25rem; font-family: 'Outfit';">Portal Pentadbir MPP UTHM 2026/2027</h2>
+        <span style="font-size: 0.8rem; color: #cbd5e1;">Pusat Kawalan Direktori Organisasi MPP & Aduan Siswa (Excel Hub)</span>
+      </div>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+      <!-- Export to Excel Button -->
+      <button class="btn-export-excel" onclick="window.mppStorage.exportToExcel()" title="Eksport Pangkalan Data Aduan ke Format Excel CSV">
+        <i class="fa-solid fa-file-excel"></i> Muat Turun Data Excel (.csv)
+      </button>
+      <a href="index.html" class="btn-community" style="background: rgba(255,255,255,0.15);">
+        <i class="fa-solid fa-arrow-left"></i> Kembali ke Website Awam
+      </a>
+    </div>
+  </header>
+
+  <div class="admin-container">
+    <!-- Statistics overview -->
+    <div class="stats-cards-grid">
+      <div class="stat-card">
+        <div>
+          <div class="stat-number" id="totalMppCount">0</div>
+          <div class="stat-label">Barisan MPP 2026/27</div>
+        </div>
+        <i class="fa-solid fa-users stat-icon"></i>
+      </div>
+      <div class="stat-card gold">
+        <div>
+          <div class="stat-number" id="totalAduanCount">0</div>
+          <div class="stat-label">Aduan Pelajar Diterima</div>
+        </div>
+        <i class="fa-solid fa-bullhorn stat-icon"></i>
+      </div>
+      <div class="stat-card pink">
+        <div>
+          <div class="stat-number" id="totalIgCount">0</div>
+          <div class="stat-label">Penyepaduan Instagram</div>
+        </div>
+        <i class="fa-brands fa-instagram stat-icon"></i>
+      </div>
+      <div class="stat-card green">
+        <div>
+          <div class="stat-number" id="totalSelesaiCount">0</div>
+          <div class="stat-label">Aduan Selesai Tindakan</div>
+        </div>
+        <i class="fa-solid fa-circle-check stat-icon"></i>
+      </div>
+    </div>
+
+    <!-- Admin Tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" id="tabAduanBtn" onclick="switchAdminTab('aduan')">
+        <i class="fa-solid fa-inbox"></i> Pengurusan Aduan Pelajar & Sambungan Excel
+      </button>
+      <button class="admin-tab-btn" id="tabMppBtn" onclick="switchAdminTab('mpp')">
+        <i class="fa-solid fa-users-gear"></i> Kemas Kini Barisan Organisasi MPP (Penuh)
+      </button>
+      <div style="margin-left: auto; display: flex; gap: 8px;">
+        <button class="btn-export-excel" onclick="window.mppStorage.exportToExcel()" style="padding: 8px 14px; font-size: 0.85rem;">
+          <i class="fa-solid fa-file-excel"></i> Eksport Excel
+        </button>
+        <button class="btn-reset-data" id="btnResetDefault">
+          <i class="fa-solid fa-rotate-left"></i> Tetap Semula Data Asal
+        </button>
+      </div>
+    </div>
+
+    <!-- PANEL 1: PENGURUSAN ADUAN PELAJAR (KE ORGANISASI MPP & PAUTAN UTHM & EXCEL) -->
+    <section id="panelAduan" class="admin-panel active">
+      <div class="admin-table-container">
+        <div class="table-top-bar">
+          <div>
+            <h3>Senarai Aduan Mahasiswa (Disambung ke Fail Excel)</h3>
+            <p style="font-size: 0.85rem; color: #64748b;">Klik butang <strong>"Lihat Penuh"</strong> untuk memeriksa maklumat terperinci atau eksport fail spreadsheet Excel terkini.</p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="aduanStatusFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;">
+              <option value="ALL">Semua Status</option>
+              <option value="Baharu">Baharu</option>
+              <option value="Dalam Tindakan">Dalam Tindakan</option>
+              <option value="Selesai">Selesai</option>
+            </select>
+            <button class="btn-export-excel" onclick="window.mppStorage.exportToExcel()">
+              <i class="fa-solid fa-download"></i> Unduh Excel (.csv)
+            </button>
+          </div>
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>No. Rujukan</th>
+              <th>Tarikh</th>
+              <th>Mod Pengadu</th>
+              <th>Maklumat Pelajar</th>
+              <th>Pautan Sistem UTHM / Organisasi</th>
+              <th>Tajuk Aduan</th>
+              <th>Status Tindakan</th>
+              <th>Tindakan Admin</th>
+            </tr>
+          </thead>
+          <tbody id="aduanTableBody">
+            <!-- Rendered by admin.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PANEL 2: PENGURUSAN BARISAN ORGANISASI MPP (SEMUA DATA BOLEH DIUBAH) -->
+    <section id="panelMpp" class="admin-panel">
+      <div class="admin-table-container">
+        <div class="table-top-bar">
+          <div>
+            <h3>Barisan Organisasi Majlis Perwakilan Pelajar (MPP) 2026/2027</h3>
+            <p style="font-size: 0.85rem; color: #64748b;">Admin boleh ubah <strong>SEMUA DATA</strong>: Nama, Peringkat Carta Pokok, Jawatan, Jabatan, Fakulti, No. Matrik, Emel, Telefon, Pejabat, Moto, Instagram & Siaran Feed.</p>
+          </div>
+          <button class="btn-add-new" id="btnOpenAddMppModal">
+            <i class="fa-solid fa-plus"></i> Tambah Ahli MPP Baharu
+          </button>
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>Nama Penuh</th>
+              <th>Peringkat Hirarki</th>
+              <th>Jawatan Rasmi</th>
+              <th>Jabatan / Portfolio</th>
+              <th>Fakulti</th>
+              <th>No. Matrik</th>
+              <th>Emel & Telefon</th>
+              <th>Instagram Pegangan</th>
+              <th>Tindakan</th>
+            </tr>
+          </thead>
+          <tbody id="mppTableBody">
+            <!-- Rendered by admin.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: PAPARAN TERPERINCI ADUAN PELAJAR (DETAIL VIEW)             -->
+  <!-- ================================================================= -->
+  <div id="aduanDetailModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-window" style="max-width: 680px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="complaint-icon-badge" style="width: 36px; height: 36px; font-size: 16px;">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <div>
+            <h4 style="color: #002244; margin: 0;">Butiran Terperinci Aduan Pelajar</h4>
+            <span id="detailRefNumber" style="font-size: 0.8rem; color: #64748b; font-weight: 700;">No Rujukan: ADU-2026-XXXX</span>
+          </div>
+        </div>
+        <button class="modal-close" onclick="document.getElementById('aduanDetailModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Status & Tarikh Banner -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #e0f2fe; padding: 12px 18px; border-radius: 8px; margin-bottom: 18px; border: 1px solid #bae6fd;">
+          <div>
+            <span style="font-size: 0.8rem; color: #0369a1; font-weight: 700; display: block;">STATUS TINDAKAN TERKINI:</span>
+            <span id="detailStatusBadge" class="badge-status badge-pending" style="font-size: 0.85rem;">Baharu</span>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 0.8rem; color: #0369a1; font-weight: 700; display: block;">TARIKH & MASA DIHANTAR:</span>
+            <strong id="detailCreatedAt" style="font-size: 0.85rem; color: #0f172a;">-</strong>
+          </div>
+        </div>
+
+        <!-- Seksyen 1: Maklumat Pengadu -->
+        <div class="detail-section-block">
+          <h4 style="font-size: 0.95rem; color: #002244; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-user-tag" style="color: #0284c7;"></i> Maklumat Mahasiswa / Pengadu
+          </h4>
+          <div class="detail-grid-row">
+            <span class="detail-label-title">Mod Pengadu:</span>
+            <span id="detailModPengadu"><strong>Berdaftar</strong></span>
+          </div>
+          <div class="detail-grid-row">
+            <span class="detail-label-title">Nama Penuh:</span>
+            <span id="detailStudentName">-</span>
+          </div>
+          <div class="detail-grid-row">
+            <span class="detail-label-title">No. Matrik:</span>
+            <span id="detailStudentMatric">-</span>
+          </div>
+          <div class="detail-grid-row">
+            <span class="detail-label-title">Emel Siswa:</span>
+            <span id="detailStudentEmail">-</span>
+          </div>
+          <div class="detail-grid-row">
+            <span class="detail-label-title">Lokasi Kampus:</span>
+            <span id="detailCampus">-</span>
+          </div>
+        </div>
+
+        <!-- Seksyen 2: Pautan Sistem UTHM & Organisasi MPP -->
+        <div class="detail-section-block">
+          <h4 style="font-size: 0.95rem; color: #002244; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-link" style="color: #0284c7;"></i> Saluran Pautan Rasmi UTHM / Organisasi MPP
+          </h4>
+          <div class="detail-grid-row">
+            <span class="detail-label-title">Saluran Pautan:</span>
+            <strong id="detailChannelName" style="color: #003366;">-</strong>
+          </div>
+          <div class="detail-grid-row">
+            <span class="detail-label-title">URL Pautan:</span>
+            <a id="detailChannelUrl" href="#" target="_blank" rel="noopener noreferrer" style="color: #0284c7; word-break: break-all; font-weight: 600;">-</a>
+          </div>
+          <div class="detail-grid-row">
+            <span class="detail-label-title">Instagram Rasmi:</span>
+            <a id="detailChannelIg" href="#" target="_blank" rel="noopener noreferrer" style="color: #e1306c; font-weight: 700;">@mpputhm_official</a>
+          </div>
+        </div>
+
+        <!-- Seksyen 3: Isi Kandungan Aduan Penuh -->
+        <div class="detail-section-block">
+          <h4 style="font-size: 0.95rem; color: #002244; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-align-left" style="color: #0284c7;"></i> Isi Kandungan Aduan Penuh
+          </h4>
+          <div style="margin-bottom: 10px;">
+            <span class="detail-label-title" style="display: block; font-size: 0.8rem; margin-bottom: 4px;">TAJUK ADUAN:</span>
+            <div id="detailSubject" style="font-size: 1.05rem; font-weight: 800; color: #0f172a; background: #fff; padding: 10px 14px; border-radius: 6px; border: 1px solid #cbd5e1;">-</div>
+          </div>
+          <div>
+            <span class="detail-label-title" style="display: block; font-size: 0.8rem; margin-bottom: 4px;">KETERANGAN TERPERINCI / KRONOLOGI ISU:</span>
+            <div id="detailDetails" style="font-size: 0.9rem; color: #334155; background: #fff; padding: 14px; border-radius: 6px; border: 1px solid #cbd5e1; line-height: 1.6; white-space: pre-wrap;">-</div>
+          </div>
+        </div>
+
+        <!-- Tindakan Cepat Pentadbir -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+          <button type="button" class="btn-secondary-done" onclick="document.getElementById('aduanDetailModal').classList.remove('active')">Tutup Paparan</button>
+          <div style="display: flex; gap: 8px;">
+            <button id="btnDetailUpdateStatus" class="btn-action-small btn-edit" style="padding: 9px 16px; font-size: 0.88rem;">
+              <i class="fa-solid fa-arrows-rotate"></i> Tukar Status Tindakan
+            </button>
+            <button id="btnDetailDelete" class="btn-action-small btn-delete" style="padding: 9px 16px; font-size: 0.88rem;">
+              <i class="fa-solid fa-trash"></i> Padam Rekod Ini
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL LENGKAP: EDIT / TAMBAH SEMUA DATA AHLI MPP -->
+  <div id="mppEditModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-window" style="max-width: 780px;">
+      <div class="modal-header">
+        <h4 id="mppModalTitle" style="color: #002244;">Kemaskini Maklumat Ahli MPP</h4>
+        <button class="modal-close" id="closeMppModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="mppEditForm">
+          <input type="hidden" id="editMppId">
+
+          <div class="form-alert-info" style="margin-bottom: 16px;">
+            <i class="fa-solid fa-pen-ruler"></i>
+            <div>Semua data di bawah boleh diubah suai. Perubahan akan serta-merta dikemas kini di direktori awam dan <strong>Carta Pokok Organisasi MPP</strong>.</div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-item">
+              <label for="formMppName">Nama Penuh: *</label>
+              <input type="text" id="formMppName" required placeholder="Contoh: Muhammad Danial Hakim bin Azman">
+            </div>
+            <div class="form-item">
+              <label for="formMppTier"><i class="fa-solid fa-sitemap"></i> Peringkat Hirarki Carta Pokok: *</label>
+              <select id="formMppTier" required>
+                <option value="ydp">Yang Dipertua (YDP) - Peringkat 1 Teratas</option>
+                <option value="tydp">Timbalan Yang Dipertua (TYDP) - Peringkat 2</option>
+                <option value="mt">Majlis Tertinggi (SU / Bendahari) - Peringkat 3</option>
+                <option value="exco">Barisan Exco Portfolio - Peringkat 4</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-item">
+              <label for="formMppPosition">Jawatan Rasmi: *</label>
+              <input type="text" id="formMppPosition" required placeholder="Contoh: Yang Dipertua (YDP) MPP UTHM">
+            </div>
+            <div class="form-item">
+              <label for="formMppDept">Jabatan / Portfolio: *</label>
+              <select id="formMppDept" required>
+                <option value="Majlis Tertinggi">Majlis Tertinggi</option>
+                <option value="Akademik & Kerjaya">Akademik & Kerjaya</option>
+                <option value="Kebajikan & Aduan Pelajar">Kebajikan & Aduan Pelajar</option>
+                <option value="Sukan, Rekreasi & Kesihatan">Sukan, Rekreasi & Kesihatan</option>
+                <option value="Hubungan Luar & Pengantarabangsaan">Hubungan Luar & Pengantarabangsaan</option>
+                <option value="Keusahawanan & Kebolehpasaran">Keusahawanan & Kebolehpasaran</option>
+                <option value="Media, Komunikasi & Korporat">Media, Komunikasi & Korporat</option>
+                <option value="Kerohanian, Pembangunan Insan & Disiplin">Kerohanian, Pembangunan Insan & Disiplin</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-item">
+              <label for="formMppFaculty">Fakulti (Kod Singkatan): *</label>
+              <select id="formMppFaculty" required>
+                <option value="FSKTM">FSKTM (Sains Komputer & IT)</option>
+                <option value="FKEE">FKEE (Kejuruteraan Elektrik & Elektronik)</option>
+                <option value="FKMP">FKMP (Kejuruteraan Mekanikal & Pembuatan)</option>
+                <option value="FKAAB">FKAAB (Kejuruteraan Awam & Alam Bina)</option>
+                <option value="FPTP">FPTP (Pengurusan Teknologi & Perniagaan)</option>
+                <option value="FPTV">FPTV (Pendidikan Teknikal & Vokasional)</option>
+                <option value="FAST">FAST (Sains Gunaan & Teknologi)</option>
+                <option value="FTK">FTK (Teknologi Kejuruteraan Pagoh)</option>
+              </select>
+            </div>
+            <div class="form-item">
+              <label for="formMppFacultyFull">Nama Penuh Fakulti:</label>
+              <input type="text" id="formMppFacultyFull" placeholder="Fakulti Sains Komputer dan Teknologi Maklumat">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-item">
+              <label for="formMppMatric">No. Matrik Pelajar: *</label>
+              <input type="text" id="formMppMatric" required placeholder="Contoh: AI230045">
+            </div>
+            <div class="form-item">
+              <label for="formMppEmail">Emel Rasmi MPP: *</label>
+              <input type="email" id="formMppEmail" required placeholder="ydp.mpp@uthm.edu.my">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-item">
+              <label for="formMppPhone">No Telefon / WhatsApp:</label>
+              <input type="text" id="formMppPhone" placeholder="+60 11-2345 6789">
+            </div>
+            <div class="form-item">
+              <label for="formMppOffice">Lokasi Meja / Bilik Gerakan:</label>
+              <input type="text" id="formMppOffice" placeholder="Bilik Gerakan MPP, Aras 2 Bangunan HEP">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-item">
+              <label for="formMppIg"><i class="fa-brands fa-instagram"></i> Username Instagram (tanpa @): *</label>
+              <input type="text" id="formMppIg" required placeholder="danialhakim_mpp">
+            </div>
+            <div class="form-item">
+              <label for="formMppAvatar">URL Foto Profil:</label>
+              <input type="url" id="formMppAvatar" placeholder="https://images.unsplash.com/...">
+            </div>
+          </div>
+
+          <div class="form-item">
+            <label for="formMppQuote">Motto / Kata Inspirasi Mahasiswa:</label>
+            <input type="text" id="formMppQuote" placeholder="Menakhoda Mahasiswa Progresif, Pemangkin Kecemerlangan UTHM.">
+          </div>
+
+          <!-- Kemaskini Kandungan Feed Terkini Instagram -->
+          <div style="background: #fafafa; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-top: 10px;">
+            <label style="font-weight: 700; color: #002244; font-size: 0.88rem; display: block; margin-bottom: 8px;">
+              <i class="fa-brands fa-instagram" style="color: #e1306c;"></i> Suapan Kiriman Instagram Terkini (Live Feed Data):
+            </label>
+            <div class="form-grid-2">
+              <div class="form-item">
+                <label for="formPostImage" style="font-size: 0.8rem;">URL Foto Kiriman:</label>
+                <input type="url" id="formPostImage" placeholder="https://images.unsplash.com/...">
+              </div>
+              <div class="form-item">
+                <label for="formPostLikes" style="font-size: 0.8rem;">Bilangan Sukaan (Likes) & Komen:</label>
+                <input type="text" id="formPostLikes" placeholder="Contoh: 1,240 sukaan • 84 komen">
+              </div>
+            </div>
+            <div class="form-item" style="margin-bottom: 0;">
+              <label for="formPostCaption" style="font-size: 0.8rem;">Kapsyen Kiriman Terkini:</label>
+              <textarea id="formPostCaption" rows="2" placeholder="Sesi libat urus bersama mahasiswa UTHM..."></textarea>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+            <button type="button" class="btn-secondary-done" onclick="document.getElementById('mppEditModal').classList.remove('active')">Batal</button>
+            <button type="submit" class="btn-submit-complaint" style="width: auto; padding: 10px 24px;">Simpan Semua Data</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: KEMAS KINI STATUS TINDAKAN ADUAN -->
+  <div id="statusModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-window" style="max-width: 500px;">
+      <div class="modal-header">
+        <h4>Kemaskini Status Tindakan Aduan</h4>
+        <button class="modal-close" onclick="document.getElementById('statusModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="statusUpdateForm">
+          <input type="hidden" id="statusAduanId">
+          <p id="statusAduanSubject" style="font-weight: 700; margin-bottom: 14px; color: #002244;"></p>
+          <div class="form-item">
+            <label for="selectNewStatus">Pilih Status Tindakan MPP:</label>
+            <select id="selectNewStatus" required style="padding: 10px; width: 100%; border-radius: 6px; border: 1px solid #cbd5e1;">
+              <option value="Baharu">Baharu</option>
+              <option value="Dalam Tindakan">Dalam Tindakan (Dipanjangkan ke Jabatan Berkaitan)</option>
+              <option value="Selesai">Selesai (Tindakan Telah Selesai Diambil)</option>
+            </select>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+            <button type="button" class="btn-secondary-done" onclick="document.getElementById('statusModal').classList.remove('active')">Batal</button>
+            <button type="submit" class="btn-submit-complaint" style="width: auto; padding: 10px 20px;">Kemas Kini Status</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

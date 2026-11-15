@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Direktori Majlis Perwakilan Pelajar (MPP) UTHM 2026/2027</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Styling khusus Bahagian View Aduan Awam & Semakan */
+    .public-aduan-section {
+      max-width: 1320px;
+      margin: 0 auto 50px;
+      padding: 0 24px;
+    }
+    .public-aduan-container {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #e2e8f0;
+    }
+    .public-aduan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 16px;
+    }
+    .public-aduan-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .aduan-search-input {
+      padding: 9px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      outline: none;
+      min-width: 250px;
+    }
+    .aduan-public-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
+    }
+    .aduan-public-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      position: relative;
+    }
+    .aduan-public-card:hover {
+      background: #ffffff;
+      border-color: #003366;
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+    .aduan-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .aduan-ticket-ref {
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: #003366;
+      background: #e0f2fe;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .aduan-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--uthm-blue-dark);
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+    .aduan-details-snippet {
+      font-size: 0.85rem;
+      color: #475569;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .aduan-channel-pill {
+      font-size: 0.78rem;
+      color: #0284c7;
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 12px;
+      width: fit-content;
+    }
+    .aduan-footer-meta {
+      margin-top: auto;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+    .btn-view-aduan-full {
+      background: #003366;
+      color: #ffffff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: var(--transition);
+    }
+    .btn-view-aduan-full:hover {
+      background: #0d47a1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="brand-logo-badge">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">MPP UTHM</span>
+          <span class="brand-sub">Sesi 2026 / 2027</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Complaint Button (Organisasi MPP & Link UTHM & Anonymous) -->
+        <button id="openComplaintModalBtn" class="btn-complaint" title="Saluran Aduan Pelajar">
+          <i class="fa-solid fa-bullhorn"></i>
+          <span>Hantar Aduan Pelajar</span>
+        </button>
+
+        <!-- View Aduan Button in Nav -->
+        <a href="#publicAduanSection" class="btn-community" title="Lihat Rekod Aduan di Dalam Website">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <span>Lihat Aduan Pelajar</span>
+        </a>
+
+        <!-- View Tree Org Button -->
+        <button id="btnNavTree" class="btn-community" onclick="toggleTreeSection()" title="Lihat Carta Pokok Organisasi">
+          <i class="fa-solid fa-sitemap"></i>
+          <span>Carta Pokok</span>
+        </button>
+
+        <!-- Community Link -->
+        <a href="https://community.uthm.edu.my" target="_blank" rel="noopener noreferrer" class="btn-community" title="Buka Portal UTHM Community">
+          <i class="fa-solid fa-users-line"></i>
+          <span>UTHM Community</span>
+          <i class="fa-solid fa-arrow-up-right-from-square small-icon"></i>
+        </a>
+
+        <!-- Instagram Official MPP UTHM -->
+        <a href="https://www.instagram.com/mpputhm_official/" target="_blank" rel="noopener noreferrer" class="btn-ig-official">
+          <i class="fa-brands fa-instagram"></i>
+          <span>@mpputhm_official</span>
+        </a>
+
+        <!-- Admin Portal Link -->
+        <a href="admin.html" class="btn-admin-nav" title="Portal Pentadbir MPP">
+          <i class="fa-solid fa-user-shield"></i>
+          <span>Portal Admin</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+    </div>
+    <div class="hero-content">
+      <div class="badge-pill">
+        <span class="pulse-dot"></span> Direktori Rasmi Kepimpinan Mahasiswa UTHM 2026/27
+      </div>
+      <h1 class="hero-title">
+        Majlis Perwakilan Pelajar <span class="highlight-text">UTHM 2026/2027</span>
+      </h1>
+      <p class="hero-subtitle">
+        Platform direktori perhubungan warga kampus bersama barisan kepimpinan MPP UTHM. 
+        Hubungi kami mengikut portfolio jabatan, fakulti, emel dan pautan terus Instagram profil kepimpinan.
+      </p>
+
+      <!-- Quick Action Pills -->
+      <div class="hero-quick-actions">
+        <button class="hero-action-pill" onclick="toggleTreeSection(true)">
+          <i class="fa-solid fa-sitemap"></i> Lihat Barisan Organisasi MPP (Carta Pokok)
+        </button>
+        <a href="#publicAduanSection" class="hero-action-pill" style="background: #0284c7; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);">
+          <i class="fa-solid fa-clipboard-list"></i> Lihat Senarai Aduan Dalam Website
+        </a>
+        <button class="hero-action-pill pill-secondary" onclick="document.getElementById('openComplaintModalBtn').click()">
+          <i class="fa-solid fa-bullhorn"></i> Hantar Aduan (Boleh Anonymous)
+        </button>
+      </div>
+
+      <!-- Search & Filters Container -->
+      <div class="filter-panel">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="searchInput" placeholder="Cari nama MPP, jawatan, fakulti atau jabatan..." autocomplete="off">
+          <button id="clearSearchBtn" class="clear-btn" style="display: none;">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-group">
+            <label for="departmentFilter"><i class="fa-solid fa-briefcase"></i> Jabatan / Portfolio:</label>
+            <select id="departmentFilter">
+              <option value="ALL">Semua Jabatan</option>
+              <option value="Majlis Tertinggi">Majlis Tertinggi (MT)</option>
+              <option value="Akademik & Kerjaya">Akademik & Kerjaya</option>
+              <option value="Kebajikan & Aduan Pelajar">Kebajikan & Aduan Pelajar</option>
+              <option value="Sukan, Rekreasi & Kesihatan">Sukan & Rekreasi</option>
+              <option value="Hubungan Luar & Pengantarabangsaan">Hubungan Luar & Antarabangsa</option>
+              <option value="Keusahawanan & Kebolehpasaran">Keusahawanan</option>
+              <option value="Media, Komunikasi & Korporat">Media & Komunikasi</option>
+              <option value="Kerohanian, Pembangunan Insan & Disiplin">Kerohanian & Pembangunan Insan</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="facultyFilter"><i class="fa-solid fa-building-columns"></i> Fakulti:</label>
+            <select id="facultyFilter">
+              <option value="ALL">Semua Fakulti</option>
+              <option value="FSKTM">FSKTM (Sains Komputer & IT)</option>
+              <option value="FKEE">FKEE (Kejuruteraan Elektrik & Elektronik)</option>
+              <option value="FKMP">FKMP (Kejuruteraan Mekanikal & Pembuatan)</option>
+              <option value="FKAAB">FKAAB (Kejuruteraan Awam & Alam Bina)</option>
+              <option value="FPTP">FPTP (Pengurusan Teknologi & Perniagaan)</option>
+              <option value="FPTV">FPTV (Pendidikan Teknikal & Vokasional)</option>
+              <option value="FAST">FAST (Sains Gunaan & Teknologi)</option>
+              <option value="FTK">FTK (Teknologi Kejuruteraan Pagoh)</option>
+            </select>
+          </div>
+
+          <div class="filter-stats">
+            Menunjukkan: <span id="countDisplay">0</span> Ahli
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- BAHAGIAN CARTA POKOK HIRARKI ORGANISASI MPP (TREE VIEW)           -->
+  <!-- ================================================================= -->
+  <section id="orgTreeSection" class="org-tree-section" style="display: none;">
+    <div class="tree-container">
+      <div class="tree-heading">
+        <span class="node-badge" style="background: #003366; color: #fff; font-size: 0.85rem; padding: 6px 16px;">
+          <i class="fa-solid fa-sitemap"></i> Struktur Hirarki Kepimpinan
+        </span>
+        <h3 style="margin-top: 10px;">Carta Pokok Organisasi MPP UTHM 2026/2027</h3>
+        <p>Struktur kepimpinan bermula daripada Yang Dipertua (YDP), Timbalan YDP, Majlis Tertinggi (MT) hingga Barisan Exco Portfolio.</p>
+        <button onclick="toggleTreeSection(false)" class="btn-secondary-done" style="margin-top: 12px;">
+          <i class="fa-solid fa-xmark"></i> Tutup Carta Pokok
+        </button>
+      </div>
+
+      <!-- Level 1: YDP -->
+      <div class="tree-branch" id="treeBranchYDP">
+        <!-- Rendered by app.js -->
+      </div>
+
+      <div class="tree-connector-v"></div>
+      <div class="tree-label-divider">TIMBALAN YANG DIPERTUA (TYDP)</div>
+      <div class="tree-connector-v"></div>
+
+      <!-- Level 2: TYDP Induk & Pagoh -->
+      <div class="tree-branch" id="treeBranchTYDP">
+        <!-- Rendered by app.js -->
+      </div>
+
+      <div class="tree-connector-v"></div>
+      <div class="tree-label-divider">MAJLIS TERTINGGI (SETIAUSAHA & BENDAHARI)</div>
+      <div class="tree-connector-v"></div>
+
+      <!-- Level 3: SU & Bendahari -->
+      <div class="tree-branch" id="treeBranchMT">
+        <!-- Rendered by app.js -->
+      </div>
+
+      <div class="tree-connector-v"></div>
+      <div class="tree-label-divider">BARISAN EXCO JABATAN / PORTFOLIO KHUSUS</div>
+      <div class="tree-connector-v"></div>
+
+      <!-- Level 4: Barisan Exco -->
+      <div class="tree-branch" id="treeBranchExco">
+        <!-- Rendered by app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Community & Complaint Banner Widget -->
+  <section class="community-banner-section">
+    <div class="community-banner-card">
+      <div class="banner-left">
+        <div class="uthm-seal">
+          <i class="fa-solid fa-bullhorn"></i>
+        </div>
+        <div>
+          <h3>Pusat Aduan Pelajar & Rangkaian Pautan UTHM</h3>
+          <p>Aduan disalurkan kepada <strong>Organisasi MPP UTHM</strong> dan dipautkan terus ke portal sistem UTHM. <strong>Boleh dihantar secara Anonymous / Tanpa Nama</strong> dan status tindakan boleh disemak terus di dalam website ini.</p>
+        </div>
+      </div>
+      <div class="banner-right">
+        <button class="banner-btn btn-hero-adu" onclick="document.getElementById('openComplaintModalBtn').click()">
+          <i class="fa-solid fa-paper-plane"></i> Buat Aduan Pelajar
+        </button>
+        <a href="#publicAduanSection" class="banner-btn-secondary">
+          <i class="fa-solid fa-eye"></i> Semak Status Aduan
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- BAHAGIAN VIEW ADUAN DARI DALAM WEBSITE SENDIRI                     -->
+  <!-- ================================================================= -->
+  <section id="publicAduanSection" class="public-aduan-section">
+    <div class="public-aduan-container">
+      <div class="public-aduan-header">
+        <div>
+          <span style="background: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800;">
+            <i class="fa-solid fa-clipboard-check"></i> Paparan Transparansi Siswa
+          </span>
+          <h2 style="font-family: 'Outfit'; color: #002244; font-size: 1.8rem; margin-top: 6px;">Papan Pantau Aduan Mahasiswa UTHM</h2>
+          <p style="color: #64748b; font-size: 0.9rem;">Lihat dan semak status aduan terkini yang direkodkan ke Organisasi MPP secara telus dan langsung dari dalam website.</p>
+        </div>
+        <div class="public-aduan-controls">
+          <input type="text" id="publicAduanSearch" class="aduan-search-input" placeholder="Cari no rujukan (ADU-xxxx), tajuk isu...">
+          <select id="publicAduanFilterStatus" style="padding: 9px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem;">
+            <option value="ALL">Semua Status Tindakan</option>
+            <option value="Baharu">Baharu</option>
+            <option value="Dalam Tindakan">Dalam Tindakan</option>
+            <option value="Selesai">Selesai</option>
+          </select>
+          <button class="btn-complaint" onclick="document.getElementById('openComplaintModalBtn').click()" style="padding: 9px 16px; font-size: 0.85rem;">
+            <i class="fa-solid fa-plus"></i> Hantar Aduan Baharu
+          </button>
+        </div>
+      </div>
+
+      <!-- Kad Grid Aduan Awam -->
+      <div id="publicAduanGrid" class="aduan-public-grid">
+        <!-- Rendered by app.js -->
+      </div>
+      <div id="noPublicAduan" style="display: none; text-align: center; padding: 40px 20px; color: #888;">
+        <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 10px;"></i>
+        <p>Tiada aduan sepadan ditemui.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MPP Directory Grid -->
+  <main class="directory-container">
+    <div class="section-heading">
+      <h2>Direktori Barisan Kepimpinan MPP Sesi 2026/2027</h2>
+      <p>Klik pada profil Instagram untuk terus ke profil rasmi atau lihat suapan visual terkini.</p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div id="mppGrid" class="mpp-grid">
+      <!-- Generated via app.js -->
+    </div>
+
+    <div id="noResults" class="no-results-state" style="display: none;">
+      <i class="fa-solid fa-user-slash"></i>
+      <h3>Tiada Rekod Dijumpai</h3>
+      <p>Sila pastikan ejaan carian tepat atau pilih tapisan jabatan/fakulti yang lain.</p>
+      <button id="resetFiltersBtn" class="btn-reset">Set Semula Pilihan</button>
+    </div>
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: BORANG ADUAN PELAJAR (ANONYMOUS & LINK SISTEM UTHM)        -->
+  <!-- ================================================================= -->
+  <div id="complaintModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-window complaint-modal-window">
+      <div class="modal-header">
+        <div class="modal-user-info">
+          <div class="complaint-icon-badge">
+            <i class="fa-solid fa-bullhorn"></i>
+          </div>
+          <div>
+            <h4>Borang Aduan Pelajar UTHM 2026/2027</h4>
+            <span class="modal-handle">Khusus Kepada Organisasi MPP & Pautan Sistem UTHM</span>
+          </div>
+        </div>
+        <button class="modal-close" id="closeComplaintModalBtn" aria-label="Tutup Paparan">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form id="complaintForm" class="complaint-form">
+          <div class="form-alert-info">
+            <i class="fa-solid fa-shield-halved"></i>
+            <div>Aduan ini disalurkan kepada <strong>Organisasi Majlis Perwakilan Pelajar (MPP UTHM)</strong> dan dipautkan terus ke sistem UTHM. Rekod aduan boleh disemak terus dalam website ini atau dieksport ke Excel oleh urusetia MPP.</div>
+          </div>
+
+          <!-- Pilihan Anonymous (Tanpa Nama) -->
+          <div class="anonymous-box">
+            <label class="anonymous-label" for="aduAnonymousToggle">
+              <i class="fa-solid fa-user-secret"></i>
+              <div>
+                <span>Hantar Sebagai Anonymous (Tanpa Nama)</span>
+                <small style="display: block; color: #64748b; font-weight: normal; font-size: 0.78rem;">Identiti peribadi anda akan dirahsiakan daripada rekod awam.</small>
+              </div>
+            </label>
+            <label class="switch-anon">
+              <input type="checkbox" id="aduAnonymousToggle">
+              <span class="slider-anon"></span>
+            </label>
+          </div>
+
+          <!-- Kotak Maklumat Pelajar (Disembunyikan / Diubah bila Anonymous aktif) -->
+          <div id="studentIdentityFields">
+            <div class="form-grid-2">
+              <div class="form-item">
+                <label for="aduName"><i class="fa-solid fa-user"></i> Nama Penuh Pelajar: *</label>
+                <input type="text" id="aduName" placeholder="Contoh: Muhammad Ali bin Ahmad">
+              </div>
+              <div class="form-item">
+                <label for="aduMatric"><i class="fa-solid fa-id-card"></i> No. Matrik: *</label>
+                <input type="text" id="aduMatric" placeholder="Contoh: AI240019">
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-item">
+                <label for="aduEmail"><i class="fa-solid fa-envelope"></i> Emel Siswa UTHM: *</label>
+                <input type="email" id="aduEmail" placeholder="nama@siswa.uthm.edu.my">
+              </div>
+              <div class="form-item">
+                <label for="aduCampus"><i class="fa-solid fa-location-dot"></i> Kampus: *</label>
+                <select id="aduCampus" required>
+                  <option value="Kampus Induk Parit Raja">Kampus Induk Parit Raja</option>
+                  <option value="Kampus Cawangan Pagoh">Kampus Cawangan Pagoh</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pilihan Pautan Sistem UTHM & Organisasi MPP -->
+          <div class="form-item">
+            <label for="aduTargetChannel"><i class="fa-solid fa-link"></i> Salurkan Aduan Kepada (Pautan Sistem UTHM / Organisasi MPP): *</label>
+            <select id="aduTargetChannel" required>
+              <!-- Dimuat secara dinamik dari data.js -->
+            </select>
+          </div>
+
+          <div class="form-item">
+            <label for="aduSubject"><i class="fa-solid fa-heading"></i> Tajuk Aduan: *</label>
+            <input type="text" id="aduSubject" required placeholder="Ringkasan isu (Contoh: Kenaikan harga makanan di kafeteria / Isu Wi-Fi kolej)">
+          </div>
+
+          <div class="form-item">
+            <label for="aduDetails"><i class="fa-solid fa-align-left"></i> Keterangan Terperinci Aduan: *</label>
+            <textarea id="aduDetails" rows="4" required placeholder="Nyatakan keterangan terperinci, lokasi spesifik, dan cadangan penyelesaian kepada Organisasi MPP..."></textarea>
+          </div>
+
+          <div class="complaint-action-buttons">
+            <button type="submit" class="btn-submit-complaint">
+              <i class="fa-solid fa-paper-plane"></i> Hantar Aduan & Buka Pautan Rasmi UTHM / Instagram MPP
+            </button>
+          </div>
+        </form>
+
+        <!-- Success Result Box (Hidden initially) -->
+        <div id="complaintSuccessBox" class="complaint-success-box" style="display: none;">
+          <div class="success-icon">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <h3>Aduan Telah Direkodkan!</h3>
+          <p id="successComplaintId" class="ticket-id">No Rujukan: ADU-2026-XXXX</p>
+          <p class="success-desc">Aduan anda telah berjaya disimpan ke dalam pangkalan data Organisasi MPP. Anda kini boleh terus melihatnya dalam papan pemantau aduan di website atau DM ke Instagram rasmi MPP:</p>
+
+          <!-- Direct Link Action Box -->
+          <div class="ig-forward-card">
+            <div class="target-mpp-preview">
+              <div class="uthm-seal" style="width: 44px; height: 44px; font-size: 18px;">
+                <i class="fa-solid fa-graduation-cap"></i>
+              </div>
+              <div style="text-align: left;">
+                <strong id="successChannelName">Organisasi Majlis Perwakilan Pelajar (MPP UTHM)</strong>
+                <span id="successChannelDesc" class="handle" style="color: #64748b; font-weight: normal; font-size: 0.8rem; display: block;">Portal Rasmi UTHM & Instagram</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%;">
+              <a id="btnDirectChannelUrl" href="#" target="_blank" rel="noopener noreferrer" class="btn-forward-ig" style="background: #003366;">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Portal / Sistem Rasmi UTHM
+              </a>
+              <a id="btnDirectInstagramAduan" href="https://www.instagram.com/mpputhm_official/" target="_blank" rel="noopener noreferrer" class="btn-forward-ig">
+                <i class="fa-brands fa-instagram"></i> DM Instagram Rasmi MPP (@mpputhm_official)
+              </a>
+            </div>
+          </div>
+
+          <div class="copy-text-box">
+            <p><strong>Salinan Teks Aduan Untuk Dihantar ke DM Instagram MPP UTHM:</strong></p>
+            <textarea id="copyComplaintText" readonly rows="3"></textarea>
+            <button id="copyClipBtn" class="btn-copy">
+              <i class="fa-regular fa-copy"></i> Salin Teks Aduan
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 10px; justify-content: center; margin-top: 14px;">
+            <button onclick="document.getElementById('complaintModal').classList.remove('active'); document.getElementById('publicAduanSection').scrollIntoView({ behavior: 'smooth' });" class="btn-secondary-done" style="background: #0284c7; color: white; border: none;">
+              <i class="fa-solid fa-eye"></i> Lihat Aduan di Papan Website
+            </button>
+            <button id="btnNewComplaint" class="btn-secondary-done">Hantar Aduan Lain</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: PAPARAN LENGKAP DETAIL ADUAN DALAM WEBSITE                 -->
+  <!-- ================================================================= -->
+  <div id="websiteAduanModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-window" style="max-width: 650px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="complaint-icon-badge" style="width: 36px; height: 36px; font-size: 16px;">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <div>
+            <h4 id="pubDetailSubject" style="color: #002244; margin: 0; font-size: 1.15rem;">Tajuk Aduan</h4>
+            <span id="pubDetailRef" style="font-size: 0.8rem; color: #64748b; font-weight: 700;">No Rujukan: ADU-2026-XXXX</span>
+          </div>
+        </div>
+        <button class="modal-close" onclick="document.getElementById('websiteAduanModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #e2e8f0;">
+          <div>
+            <span style="font-size: 0.75rem; color: #64748b; display: block; font-weight: 700;">STATUS TINDAKAN:</span>
+            <span id="pubDetailStatusBadge" class="badge-status badge-pending">Baharu</span>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 0.75rem; color: #64748b; display: block; font-weight: 700;">TARIKH:</span>
+            <strong id="pubDetailDate" style="font-size: 0.85rem; color: #1e293b;">-</strong>
+          </div>
+        </div>
+
+        <div style="background: #f1f5f9; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.88rem;">
+          <div style="margin-bottom: 6px;"><strong>Pengadu:</strong> <span id="pubDetailStudent">-</span></div>
+          <div style="margin-bottom: 6px;"><strong>Kampus:</strong> <span id="pubDetailCampus">-</span></div>
+          <div><strong>Saluran Disalurkan:</strong> <span id="pubDetailChannel" style="color: #003366; font-weight: 700;">-</span></div>
+        </div>
+
+        <div>
+          <strong style="font-size: 0.85rem; color: #475569; display: block; margin-bottom: 6px;">KETERANGAN PENUH ADUAN:</strong>
+          <div id="pubDetailContent" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 14px; border-radius: 8px; font-size: 0.92rem; line-height: 1.6; white-space: pre-wrap; color: #1e293b;">
+            -
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+          <a id="pubDetailIgBtn" href="https://www.instagram.com/mpputhm_official/" target="_blank" rel="noopener noreferrer" class="btn-action-ig" style="padding: 9px 16px;">
+            <i class="fa-brands fa-instagram"></i> Hubungi IG MPP
+          </a>
+          <button type="button" class="btn-secondary-done" onclick="document.getElementById('websiteAduanModal').classList.remove('active')">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instagram Live Pull / Feed Modal -->
+  <div id="igModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-window">
+      <div class="modal-header">
+        <div class="modal-user-info">
+          <img id="modalAvatar" src="" alt="Avatar" class="modal-avatar">
+          <div>
+            <h4 id="modalName">Nama MPP</h4>
+            <span id="modalHandle" class="modal-handle">@username</span>
+          </div>
+        </div>
+        <button class="modal-close" id="closeModalBtn" aria-label="Tutup Paparan">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="ig-pull-status">
+          <span class="status-indicator live"></span>
+          <span>Suapan Siaran Langsung Profil Instagram</span>
+          <a id="modalExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-open-ig-direct">
+            Buka di App Instagram <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+
+        <!-- Embedded Instagram Frame / Preview Feed -->
+        <div class="ig-feed-container" id="igFeedContainer">
+          <!-- Dynamic Content loaded via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick View Details Modal -->
+  <div id="detailModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-window detail-window">
+      <div class="modal-header">
+        <h3>Profil Penuh Perwakilan</h3>
+        <button class="modal-close" id="closeDetailModalBtn" aria-label="Tutup Paparan">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="detail-body" id="detailBodyContent">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <div class="footer-info">
+        <h4>Majlis Perwakilan Pelajar (MPP) Universiti Tun Hussein Onn Malaysia</h4>
+        <p>Aras 2, Bangunan Hal Ehwal Pelajar (HEP), UTHM Kampus Induk Parit Raja, 86400 Batu Pahat, Johor.</p>
+        <p class="copyright">© 2026/2027 MPP UTHM. Terhubung dengan UTHM Community, Saluran Aduan Pelajar (Excel Export) & Instagram Direct Feed.</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://community.uthm.edu.my" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-users"></i> UTHM Community</a>
+        <a href="admin.html"><i class="fa-solid fa-lock"></i> Portal Admin MPP</a>
+        <a href="https://eaduan.uthm.edu.my" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-screwdriver-wrench"></i> e-Aduan UTHM</a>
+        <a href="https://hepa.uthm.edu.my" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-building"></i> HEPA UTHM</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
